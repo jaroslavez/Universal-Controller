@@ -21,6 +21,8 @@ export default class InputController {
 
         target && this.attach(target);
          
+        this.handleKeyDown = this.handleKeyDown.bind(this)
+        this.handleKeyDown = this.handleKeyDown.bind(this)
     }
 
     bindActions(actionsToBind) {
@@ -50,9 +52,8 @@ export default class InputController {
         this.enabled = !dontEnable;
         this._target = target;
 
-        target.addEventListener('keydown', this.handleKeyDown.bind(this));
-
-        target.addEventListener('keyup', this.handleKeyUp.bind(this));
+        target.addEventListener('keydown', this.handleKeyDown);
+        target.addEventListener('keyup', this.handleKeyUp);
     }
 
     handleKeyDown(e) {
