@@ -4,12 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test task</title>
+    <style type="text/css">
+        body {
+            margin: 0; 
+            padding: 0;
+        }
+
+        .App {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            justify-content: center; 
+            align-items: center;
+        }
+
+        .wrapper {
+            display: flex; 
+            align-items: center; 
+            gap: 10px;
+        }
+
+        .display {
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            width: 50px; 
+            height: 50px; 
+            position: relative; 
+            transition: all 0.2s; 
+            border: black solid 2px
+        }
+
+        .display:focus {
+            background-color: gray;
+        }
+    </style>
 </head>
-<body style="margin: 0; padding: 0;">
-    <div class="App" style="width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center;" >
-        <div class="wrapper" style="display: flex; align-items: center; gap: 10px;">
-            <div class="display" tabindex="0" style="display: flex; align-items: center; justify-content: center;
-            width: 50px; height: 50px; position: relative; transition: all 0.2s;"></div>
+<body>
+    <div class="App" >
+        <div class="wrapper">
+            <div class="display" tabindex="0"></div>
             <button class="attach-button">Аттач</button>
             <button class="detach-button">Детач</button>
             <button class="activate-button">Активация контроллера</button>
