@@ -16,14 +16,12 @@ export default class InputController {
         });
         //////////////
 
-        this.handleKeyDown = this.handleKeyDown.bind(this);
-        this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this)
+        this.handleKeyUp = this.handleKeyUp.bind(this)
 
         actionsToBind && this.bindActions(actionsToBind);
 
         target && this.attach(target);
-         
-        
     }
 
     bindActions(actionsToBind) {
