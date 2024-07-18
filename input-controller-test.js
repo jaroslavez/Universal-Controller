@@ -31,6 +31,7 @@ let left = 0;
 
 target.addEventListener("input-controller:action-activated", (e) => {
     e.target.innerHTML = e.detail.nameAction;
+
     if(e.detail.nameAction === "jump") {
         e.target.style.backgroundColor = 'blue';
     }
@@ -64,20 +65,20 @@ target.addEventListener("input-controller:action-deactivated", (e) => {
 //Кнопки
 
 const attach_but = document.querySelector(".attach-button");
-attach_but.onclick = () => inputController.attach(target);
+attach_but.addEventListener("click", () => inputController.attach(target));
 
 const detuch_but = document.querySelector(".detach-button");
-detuch_but.onclick = () => inputController.detach();
+detuch_but.addEventListener("click", () => inputController.detach());
 
 const activate_but = document.querySelector(".activate-button");
-activate_but.onclick = () => inputController.enableController();
+activate_but.addEventListener("click", () => inputController.enableController());
 
 const deactivate_but = document.querySelector(".deactivate-button");
-deactivate_but.onclick = () => inputController.disableController();
+deactivate_but.addEventListener("click", () => inputController.disableController());
 
 let isSwitchJump = false;
 const switch_jump_but = document.querySelector(".switch-jump-button");
-switch_jump_but.onclick = () => {
+switch_jump_but.addEventListener("click", () => {
     isSwitchJump = !isSwitchJump;
 
     if(isSwitchJump){
@@ -92,6 +93,4 @@ switch_jump_but.onclick = () => {
 
     inputController.bindActions(actionsToBind);
     
-};
-
-
+});

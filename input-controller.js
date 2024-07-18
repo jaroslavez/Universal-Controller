@@ -1,8 +1,13 @@
 
 export default class InputController {
+
     enabled = false;
+
     focused = false;
+
     keyPressed = new Set();
+
+    activeActions = new Set();
     
     constructor(actionsToBind, target) {
         //Константы
@@ -16,8 +21,11 @@ export default class InputController {
         });
         //////////////
 
-        this.handleKeyDown = this.handleKeyDown.bind(this)
-        this.handleKeyUp = this.handleKeyUp.bind(this)
+        this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.handleKeyUp = this.handleKeyUp.bind(this);
+
+        this.handleFocusIn = this.handleFocusIn.bind(this);
+        this.handleFocusOut = this.handleFocusOut.bind(this);
 
         actionsToBind && this.bindActions(actionsToBind);
 
@@ -29,19 +37,25 @@ export default class InputController {
             !actionsToBind[prop].enabled &&
             (actionsToBind[prop].enabled = false); 
         }
-        this._actionsToBind = actionsToBind;
+        !this._actionsToBind && (this._actionsToBind = {});
+        this._actionsToBind = Object.assign(this._actionsToBind, actionsToBind);
     }
 
     enableAction(actionName) {
         this._actionsToBind[actionName].enabled = true;
     }
 
-    disableAction() {
+    disableAction(actionName) {
         this._actionsToBind[actionName].enabled = false;
     }
 
     isActionActive(action) {
-        return this._actionsToBind[action].enabled;
+        let at_least_one_key_is_pressed = false;
+        this._actionsToBind[action].keys.forEach(key => {
+            this.isKeyPressed(key) && (at_least_one_key_is_pressed = true)
+        });
+
+        return at_least_one_key_is_pressed && this.enabled && this._actionsToBind[action].enabled;
     }
 
     attach(target, dontEnable = false) {
@@ -53,59 +67,62 @@ export default class InputController {
 
         target.addEventListener('keydown', this.handleKeyDown);
         target.addEventListener('keyup', this.handleKeyUp);
+
+        target.addEventListener("focusin", this.handleFocusIn);
+        target.addEventListener("focusout", this.handleFocusOut);
     }
 
     handleKeyDown(e) {
         this.keyPressed.add(e.keyCode);
-        if(!this.enabled) {
-            return;
-        }
 
         for(const action in this._actionsToBind) {
  
             if(!this.isActionActive(action))
                 continue;
 
-            for(const key of this._actionsToBind[action].keys) {
-
-                if(key == e.keyCode) {
-                    const active_event = new CustomEvent(this.ACTION_ACTIVATED, {
-                        detail: {
-                            nameAction: action
-                        }
-                    });
-                    this.$target.dispatchEvent(active_event);
+            const active_event = new CustomEvent(this.ACTION_ACTIVATED, {
+                detail: {
+                    nameAction: action
                 }
-            }
+            });
+            this.$target.dispatchEvent(active_event);
+
+            this.activeActions.add(action);
         }
     }
 
     handleKeyUp(e) {
         this.keyPressed.delete(e.keyCode);
-        if(!this.enabled) {
-            return;
-        }
 
         for(const action in this._actionsToBind) {
-            if(!this.isActionActive(action))
+            if(this.isActionActive(action) || !this.activeActions.has(action))
                 continue;
-
-            for(const key of this._actionsToBind[action].keys) {
-                if(key == e.keyCode) {
-                    const active_event = new CustomEvent(this.ACTION_DEACTIVATED, {
-                        detail: {
-                            nameAction: action
-                        }
-                    });
-                    this.$target.dispatchEvent(active_event);
+ 
+            const active_event = new CustomEvent(this.ACTION_DEACTIVATED, {
+                detail: {
+                    nameAction: action
                 }
-            }
+            });
+            this.$target.dispatchEvent(active_event);
+
+            this.activeActions.delete(action);
         }
+    }
+
+    handleFocusIn() {
+        this.focused = true;
+    }
+
+    handleFocusOut() {
+        this.focused = false;
     }
 
     detach() {
         this.$target.removeEventListener('keydown', this.handleKeyDown);
         this.$target.removeEventListener('keyup', this.handleKeyUp);
+        this.$target.removeEventListener("focusin", this.handleFocusIn);
+        this.$target.removeEventListener("focusout", this.handleFocusOut);
+
         this.$target = null;
         this.enabled = false;
     }
