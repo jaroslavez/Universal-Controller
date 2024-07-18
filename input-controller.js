@@ -63,7 +63,7 @@ export default class InputController {
 
         for(const action in this._actionsToBind) {
  
-            if(!isActionActive(action))
+            if(!this.isActionActive(action))
                 continue;
 
             for(const key of this._actionsToBind[action].keys) {
@@ -87,7 +87,7 @@ export default class InputController {
         }
 
         for(const action in this._actionsToBind) {
-            if(!isActionActive(action))
+            if(!this.isActionActive(action))
                 continue;
 
             for(const key of this._actionsToBind[action].keys) {
